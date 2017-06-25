@@ -3,10 +3,10 @@
 *********/
 var sheet_; //the spreadsheet that is appended to
 var SHEET_MAX_ROWS = 50000; //sheet is cleared and starts again
-var SHEET_LOG_CELL_WIDTH = 1000; //
-var SHEET_LOG_HEADER = 'Message layout: Date Time UTC-Offset MillisecondsSinceInvoked LogLevel Message. Use Ctrl↓ (or Command↓) to jump to the last row';
+var SHEET_LOG_CELL_WIDTHS = [180,40,40,50,600]; //
+var SHEET_LOG_HEADER = ["Datetime","uSec","Level","Remote","Message"];
 var DATE_TIME_LAYOUT = 'yyyy-MM-dd HH:mm:ss:SSS Z'; //http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
-var JSON_SPACES = 0; //the number of space characters to use as white space; 
+var JSON_SPACES = 0; //the number of space characters to use as white space;
 
 //ref http://docs.oracle.com/javase/7/docs/api/java/util/logging/Level.html
 var Level = Object.freeze({
@@ -23,9 +23,9 @@ var Level = Object.freeze({
 var level_ = Level.INFO; //set as default. The log level. We log everything this level or greater.
 var START_TIME = new Date(); //so we can calculate elapsed time;
 var thisApp_ = this;
-var counter = 0; 
+var counter = 0;
 // If the call to log something has no auth then it can't write to a spreadsheet etc so we use a urlfetch to webapp (remoteLogProxy).
-var USE_REMOTE_LOGGER = false; //Default here but evaluated in useSpreadsheet. 
+var USE_REMOTE_LOGGER = false; //Default here but evaluated in useSpreadsheet.
 
 var nativeLogger_ = Logger;
 
@@ -43,7 +43,7 @@ var nativeLogger_ = Logger;
 function useSpreadsheet(optKey, optSheetName) {
   if (hasAuth_()) {
     setLogSheet_(optKey, optSheetName);
-    sheet_.getRange(1,1).setValue(SHEET_LOG_HEADER); //in case we need to update
+    sheet_.getRange("A1:E1").setValues([SHEET_LOG_HEADER]); //in case we need to update
     rollLogOver_(); //rollover the log if we need to
   } else {
     USE_REMOTE_LOGGER = true;
@@ -59,8 +59,8 @@ function remoteLogProxy(e) {
 
 /**
 * Logs at the SEVERE level. SEVERE is a message level indicating a serious failure.
-* In general SEVERE messages should describe events that are of considerable importance and 
-* which will prevent normal program execution. They should be reasonably intelligible to end users and to system administrators. 
+* In general SEVERE messages should describe events that are of considerable importance and
+* which will prevent normal program execution. They should be reasonably intelligible to end users and to system administrators.
 *
 * @param  {Object} message    The message to log or an sprintf-like format string (uses Utilities.formatString() internally - see http://www.perlmonks.org/?node_id=20519 as a good reference).
 * @param  {Object...} optValues  If a format string is used in the message, a number of values to insert into the format string.
@@ -77,7 +77,7 @@ function severe(message, optValues) {
 /**
 * Logs at the WARNING level. WARNING is a message level indicating a potential problem.
 * In general WARNING messages should describe events that will be of interest to end users
-* or system managers, or which indicate potential problems. 
+* or system managers, or which indicate potential problems.
 *
 * @param  {Object} message    The message to log or an sprintf-like format string (uses Utilities.formatString() internally - see http://www.perlmonks.org/?node_id=20519 as a good reference).
 * @param  {Object...} optValues  If a format string is used in the message, a number of values to insert into the format string.
@@ -93,22 +93,22 @@ function warning(message, optValues) {
 
 /**
 * Logs at the INFO level. INFO is a message level for informational messages.
-* Typically INFO messages will be written to the console or its equivalent. So the INFO level 
-* should only be used for reasonably significant messages that will make sense to end users and system administrators. 
+* Typically INFO messages will be written to the console or its equivalent. So the INFO level
+* should only be used for reasonably significant messages that will make sense to end users and system administrators.
 <h3>Examples:</h3>
-<pre>  
+<pre>
 function myFunction() {
-&nbsp; //Best practice for using BetterLog and logging to a spreadsheet: 
+&nbsp; //Best practice for using BetterLog and logging to a spreadsheet:
 &nbsp; // You can add and set the property "BetterLogLevel" in File > Project Properties and change it to
 &nbsp; // "OFF","SEVERE","WARNING","INFO","CONFIG","FINE","FINER","FINEST" or "ALL" at runtime without editing code.
 &nbsp;  Logger = BetterLog.setLevel(ScriptProperties.getProperty('BetterLogLevel')) //defaults to 'INFO' level
 &nbsp; .useSpreadsheet('0AhDqyd_bUCmvdDdGczRlX00zUlBMeGNLeE9SNlJ0VGc'); //automatically rolls over at 50,000 rows
-  
+
 &nbsp; Logger.log('Messages using Logger.log continue to work');
-  
+
 &nbsp; Logger.config('The current log level is %s', Logger.getLevel());
 &nbsp; Logger.finer('Entering the "%s" function', arguments.callee.name); //only logged if level is FINER, FINEST or ALL.
-    
+
 &nbsp; Logger.info('Starting my function that does stuff');
 
 &nbsp; //Do our work
@@ -136,8 +136,8 @@ function info(message, optValues) {
 
 /**
 * Logs at the CONFIG level. CONFIG is a message level for static configuration messages.
-* CONFIG messages are intended to provide a variety of static configuration information, 
-* to assist in debugging problems that may be associated with particular configurations. 
+* CONFIG messages are intended to provide a variety of static configuration information,
+* to assist in debugging problems that may be associated with particular configurations.
 *
 * @param  {Object} message    The message to log or an sprintf-like format string (uses Utilities.formatString() internally - see http://www.perlmonks.org/?node_id=20519 as a good reference).
 * @param  {Object...} optValues  If a format string is used in the message, a number of values to insert into the format string.
@@ -153,11 +153,11 @@ function config(message, optValues) {
 
 /**
 * Logs at the FINE level. FINE is a message level providing tracing information.
-* All of FINE, FINER, and FINEST are intended for relatively detailed tracing. 
-* The exact meaning of the three levels will vary between subsystems, but in general, 
-* FINEST should be used for the most voluminous detailed output, 
+* All of FINE, FINER, and FINEST are intended for relatively detailed tracing.
+* The exact meaning of the three levels will vary between subsystems, but in general,
+* FINEST should be used for the most voluminous detailed output,
 * FINER for somewhat less detailed output, and FINE for the lowest volume (and most important) messages.
-* 
+*
 * In general the FINE level should be used for information that will be broadly interesting to developers
 * who do not have a specialized interest in the specific subsystem.
 * FINE messages might include things like minor (recoverable) failures. Issues indicating potential performance problems are also worth logging as FINE. T
@@ -175,8 +175,8 @@ function fine(message, optValues) {
 }
 
 /**
-* Logs at the FINER level. FINER indicates a fairly detailed tracing message. 
-* By default logging calls for entering, returning, or throwing an exception are traced at this level. 
+* Logs at the FINER level. FINER indicates a fairly detailed tracing message.
+* By default logging calls for entering, returning, or throwing an exception are traced at this level.
 *
 * @param  {Object} message    The message to log or an sprintf-like format string (uses Utilities.formatString() internally - see http://www.perlmonks.org/?node_id=20519 as a good reference).
 * @param  {Object...} optValues  If a format string is used in the message, a number of values to insert into the format string.
@@ -191,7 +191,7 @@ function finer(message, optValues) {
 }
 
 /**
-* Logs at the FINEST level. FINEST indicates a highly detailed tracing message. 
+* Logs at the FINEST level. FINEST indicates a highly detailed tracing message.
 *
 * @param  {Object} message    The message to log or an sprintf-like format string (uses Utilities.formatString() internally - see http://www.perlmonks.org/?node_id=20519 as a good reference).
 * @param  {Object...} optValues  If a format string is used in the message, a number of values to insert into the format string.
@@ -208,7 +208,7 @@ function finest(message, optValues) {
 /**
 * Logs at the INFO level. INFO is a message level for informational messages.
 * Typically INFO messages will be written to the console or its equivalent. So the INFO level should
-* only be used for reasonably significant messages that will make sense to end users and system administrators. 
+* only be used for reasonably significant messages that will make sense to end users and system administrators.
 *
 * @param  {Object} message    The message to log or an sprintf-like format string (uses Utilities.formatString() internally - see http://www.perlmonks.org/?node_id=20519 as a good reference).
 * @param  {Object...} optValues  If a format string is used in the message, a number of values to insert into the format string.
@@ -252,7 +252,7 @@ function hasAuth_() {
     Session.getActiveUser();
     return true;
   } catch (e) {
-    return false; 
+    return false;
   }
 }
 
@@ -261,8 +261,8 @@ function stringToLevel_(str) {
   for (var name in Level) {
     if (name == str) {
       return Level[name];
-    } 
-  } 
+    }
+  }
 }
 
 // Returns the Level as a String
@@ -270,7 +270,7 @@ function levelToString_(lvl) {
   for (var name in Level) {
     if (Level[name] == lvl)
       return name;
-  } 
+  }
 }
 
 //gets the current logging level
@@ -300,16 +300,16 @@ function isLoggable_(Level) {
 //core logger function
 function log_(msgArgs, level) {
   counter++;
-  
+
   // get args and transform objects to strings like the native logger does.
   var args = Array.prototype.slice.call(msgArgs).map(function(e){
     var type = typeof e;
     if (type === 'undefined') return 'undefined';
     return e !== null && type === 'object' ? JSON.stringify(e, null, JSON_SPACES) : e;
   });
-  
-  var msg =  (typeof msgArgs[0] == 'string' || msgArgs[0] instanceof String) ? Utilities.formatString.apply(this, args) : msgArgs[0];  
-  
+
+  var msg =  (typeof msgArgs[0] == 'string' || msgArgs[0] instanceof String) ? Utilities.formatString.apply(this, args) : msgArgs[0];
+
   //default console logging (built in with Google Apps Script's View > Logs...)
   nativeLogger_.log(convertUsingDefaultPatternLayout_(msg, level));
   //ss logging
@@ -322,28 +322,28 @@ function log_(msgArgs, level) {
 function rollLogOver_() {
   var rowCount = call_(function() {return sheet_.getLastRow();});
   if (rowCount > SHEET_MAX_ROWS) {
-    
+
     // get a lock or throw exception
     var lock = LockService.getScriptLock();
     lock.waitLock(10000); //try for 10 secs to get a lock, long enough to rollover the log
-    
+
     //copy the log
     var ss = sheet_.getParent();
     var oldLog = ss.copy(ss.getName() + ' as at ' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), DATE_TIME_LAYOUT));
-    
+
     //add current viewers and editors to old log
     oldLog.addViewers(ss.getViewers());
     oldLog.addEditors(ss.getEditors());
-    
+
     // prep the live log
     sheet_.deleteRows(2, sheet_.getMaxRows()-2);
     sheet_.getRange(1,1).setValue(SHEET_LOG_HEADER);
-    
+
     //update the log
     sheet_.getRange("A2").setValue(['Log reached ' + rowCount + ' rows (MAX_ROWS is ' + SHEET_MAX_ROWS + ') and was cleared. Previous log is available here:']);
     sheet_.appendRow([oldLog.getUrl()]);
-    
-    //release lock 
+
+    //release lock
     lock.releaseLock();
   }
 }
@@ -359,14 +359,14 @@ function logToSheet_(msg, level) {
     var url = ScriptApp.getService().getUrl()+'?betterlogmsg='+message;
     call_(function() {UrlFetchApp.fetch(url);});
   } else {
-    call_(function() {sheet_.appendRow([message]);});
+    call_(function() {sheet_.appendRow(message);});
   }
 }
 // convert message to text string
 function convertUsingDefaultPatternLayout_(msg, level) {
   var now = new Date;
   var dt = Utilities.formatDate(now, Session.getScriptTimeZone(), DATE_TIME_LAYOUT);
-  var message = dt + " " + pad_(now - START_TIME, 6) + " " + levelToString_(level) + " " + (USE_REMOTE_LOGGER ? 'REMOTE ': '') + msg;
+  var message = [dt , pad_(now - START_TIME, 6) , levelToString_(level) , (USE_REMOTE_LOGGER ? 'REMOTE ': '') , msg];
   return message;
 }
 // convert message to text string
@@ -385,10 +385,23 @@ function setLogSheet_(optKey, optSheetName) {
     }
   }
   sheet_ = ss.insertSheet(sheetName, i);
-  sheet_.deleteColumns(2,sheet_.getMaxColumns()-1);
-  sheet_.getRange(1,1).setValue(SHEET_LOG_HEADER);
+  sheet_.deleteColumns(4,sheet_.getMaxColumns()-4);
+  sheet_.getRange("A1:E1").setValues([SHEET_LOG_HEADER]);
   sheet_.setFrozenRows(1);
-  sheet_.setColumnWidth(1, SHEET_LOG_CELL_WIDTH);
+  sheet_.setFrozenColumns(1);
+  for (var col=1; col <=5; ++col ){
+         sheet_.setColumnWidth(col, SHEET_LOG_CELL_WIDTHS[col-1]);
+  }
+  sheet_.getRange("A:E").setFontFamily("Roboto Condensed");
+  sheet_.getRange("A1:1")
+  //.setFontWeight("bold")
+  .setFontColor("white")
+  .setBackground("black");
+  sheet_.getRange("A1:A")
+//  .setFontWeight("bold")
+  .setFontColor("white")
+  .setBackground("black");
+
   info("Log created");
 }
 
@@ -397,7 +410,7 @@ function pad_(n,len) {
   var s = n.toString();
   if (s.length < len) {
     s = ('0000000000' + s).slice(-len);
-  } 
+  }
   return s;
 }
 
@@ -418,8 +431,9 @@ function call_(func, optLoggerFunction) {
       if (optLoggerFunction) {optLoggerFunction("call_ " + n + ": " + e)}
       if (n == 5) {
         throw e;
-      } 
+      }
       Utilities.sleep((Math.pow(2,n)*1000) + (Math.round(Math.random() * 1000)));
-    }    
+    }
   }
 }
+// vim: set ft=javascript sw=4 tw=0 fdm=syntax noet :
