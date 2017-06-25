@@ -7,12 +7,22 @@ This library is already published as an Apps Script, making it easy to include
 in your project. To add it to your script, do the following in the Apps Script
 code editor:
 
+> Note: the original BetterLog Library is available with the key  
+`iMYB7yzedMbnJaMKECt6Sm7FLDhaBgl_dE`  This is the source from which I forked.
+if you wish to use my improvements, use this key instead:
+`MFCkjfQb5nvX8xW17t1y2q4K9BPgm4Dtj` Note however, that this is **not** production
+grade, unexpected things may break and **your printer may catch fire**. Use at 
+you own risk. 
+if you do use it, please let report any bugs here on the issue tracker
+
+
 1. Click on the menu item "Resources > Libraries..."
 2. In the "Find a Library" text box, enter the project key
-   `MYB7yzedMbnJaMKECt6Sm7FLDhaBgl_dE` and click the "Select" button.
+   `MFCkjfQb5nvX8xW17t1y2q4K9BPgm4Dtj`` and click the "Select" button.
 3. Choose a version in the dropdown box (usually best to pick the latest
    version).
 4. Click the "Save" button.
+
 
 Alternatively, you can copy and paste the Code.gs file directly into your script project.
 
@@ -37,10 +47,10 @@ function myFunction() {
   try {
     // Add one line to use BetterLog and log to a spreadsheet
     Logger = BetterLog.useSpreadsheet('your-spreadsheet-key-goes-here'); 
-    
+
     //Now you can log and it will also log to the spreadsheet
     Logger.log("That's all you need to do");  
-    
+
     //Do more logging
     for (var i = 0; i < 5; i++) {
       var processingMessage = 'Processing ' + i;
