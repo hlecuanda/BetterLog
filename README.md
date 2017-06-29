@@ -18,6 +18,13 @@ If you need something actually reliable,  please refer to the upstream repo.
 If you **do** use it, please report any bugs on this repo's 
 [issue tracker](https://github.com/hlecuanda/BetterLog/issues).
 
+The features i'm working on are
+- [ ] Multicolumn output
+    - [x] Standard log output in 4 columns for easy filtering using filter views
+    - [ ] Automatic custom column detection when using a separatpr char on the logging output
+- [ ] Refactor Apps-script features being deprecated (`ScriptProperties`)
+- [ ] Make friendlier documentation, specially for the newcomer to GAS.
+
 
 ## Setup
 This library is already published as an Apps Script, making it easy to include
