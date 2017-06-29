@@ -1,26 +1,33 @@
 # BetterLog
-With one line of code, BetterLog extends the native apps script Logger and gives you automatic additional features like logging to a spreadsheet and more.
+With one line of code, BetterLog extends the native apps script Logger and 
+gives you automatic additional features like logging to a spreadsheet and more.
+
+## About this fork
+Note: the **[upstream BetterLog Library](https://github.com/peterherrmann/BetterLog)**, from which
+I forked; is available with the key  `iMYB7yzedMbnJaMKECt6Sm7FLDhaBgl_dE` 
+
+If you wish to use my ~improvements~ changes, use this key instead:    
+`MFCkjfQb5nvX8xW17t1y2q4K9BPgm4Dtj`
+
+Note however, that this is **not** production grade, should be considered 
+*work in progress* (sporadically) and that  unexpected things may break as my 
+dev branch is not always in a consistent state.  Also, **your printer may catch fire**. 
+Use at you own risk. 
+
+If you need something actually reliable,  please refer to the upstream repo.  
+If you **do** use it, please report any bugs on this repo's 
+[issue tracker](https://github.com/hlecuanda/BetterLog/issues).
+
 
 ## Setup
-
 This library is already published as an Apps Script, making it easy to include
 in your project. To add it to your script, do the following in the Apps Script
 code editor:
 
-> Note: the original BetterLog Library is available with the key  
-`iMYB7yzedMbnJaMKECt6Sm7FLDhaBgl_dE`  This is the source from which I forked.
-if you wish to use my improvements, use this key instead:
-`MFCkjfQb5nvX8xW17t1y2q4K9BPgm4Dtj` Note however, that this is **not** production
-grade, unexpected things may break and **your printer may catch fire**. Use at 
-you own risk. 
-if you do use it, please let report any bugs here on the issue tracker
-
-
 1. Click on the menu item "Resources > Libraries..."
 2. In the "Find a Library" text box, enter the project key
-   `MFCkjfQb5nvX8xW17t1y2q4K9BPgm4Dtj`` and click the "Select" button.
-3. Choose a version in the dropdown box (usually best to pick the latest
-   version).
+   `MFCkjfQb5nvX8xW17t1y2q4K9BPgm4Dtj` and click the "Select" button.
+3. Choose a version in the dropdown box (usually best to pick the latest version).
 4. Click the "Save" button.
 
 
@@ -99,3 +106,4 @@ will provoke the script authorization.
 
 * BetterLog currently can't be used to log from [custom functions](https://developers.google.com/apps-script/guides/sheets/functions) in Google Sheets because [custom functions are run in the context of an anononymous user](https://developers.google.com/apps-script/guides/services/authorization) which means that BetterLog will not be able to edit the spreadsheet to create or append to a log sheet. I'm not aware of a workaround but you could write a web app whose URL could be called anonymously with a query parameter that is written to your log. 
 
+[1] https://github.com/hlecuanda/BetterLog/issues "Issue Tracker for this fork"
